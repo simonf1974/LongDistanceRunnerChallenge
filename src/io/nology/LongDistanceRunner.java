@@ -1,5 +1,11 @@
 package io.nology;
 
+import com.google.common.math.IntMath;
+
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class LongDistanceRunner {
     private int energy;
     private int milesRun;
@@ -17,33 +23,53 @@ public class LongDistanceRunner {
         isDead = false;
     }
 
-    public void run(int miles) throws Exception {
-        if (isHungry || needsTheLoo) throw new Exception("Can't run if runner is hungry or ");
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public String run(int miles) {
+        if (isHungry || needsTheLoo) return "Can't run if runner is hungry or needs the loo \n" + toString();
         int hungryMilesRemainder = milesRun % 10;
         int looMilesRemainder = milesRun % 14;
         if (miles + hungryMilesRemainder >=10) isHungry = true;
         if (miles + looMilesRemainder >=14) needsTheLoo = true;
-        reduceEnergy((int) Math.floor(miles / 2));
+        reduceEnergy(IntMath.divide(miles, 2, RoundingMode.UP));
         milesRun += miles;
+        return toString();
     }
 
-    public void eat() {
+    public String eat() {
         isHungry = false;
         reduceEnergy(1);
+        return toString();
     }
 
-    public void wee() {
+    public String wee() {
         needsTheLoo = false;
         reduceEnergy(1);
+        return toString();
     }
 
-    public void sleep() {
+    public String sleep() {
         energy = 10;
         daysSlept += 1;
+        return toString();
     }
 
     private void reduceEnergy(int amount)  {
         energy -= amount;
         if (energy <= 0) isDead = true;
+    }
+
+    @Override
+    public String toString() {
+        return "LongDistanceRunner{" +
+                "energy=" + energy +
+                ", milesRun=" + milesRun +
+                ", daysSlept=" + daysSlept +
+                ", isHungry=" + isHungry +
+                ", needsTheLoo=" + needsTheLoo +
+                ", isDead=" + isDead +
+                '}';
     }
 }
